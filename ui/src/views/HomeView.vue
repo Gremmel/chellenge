@@ -104,6 +104,10 @@ const sendCounter = async (counterObj) => {
 
 // Neuen Zähler speichern
 const clickSave = async (challengeData) => {
+  if (challengeData.countInput === undefined || challengeData.countInput === '') {
+    return;
+  }
+
   disableButtons.value = true;
   let countDone = 0;
   let datumHeute = challengeData.datumHeute;
