@@ -13,6 +13,7 @@
               <th scope="col">E-Mail</th>
               <th scope="col">Aktiv</th>
               <th scope="col">Rollen</th>
+              <th scope="col">Team</th>
               <th scope="col"></th>
             </tr>
           </thead>
