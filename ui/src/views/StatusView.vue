@@ -2,22 +2,115 @@
   <main>
     <div class="text-center mt-4">
       <div class="container">
-        asdf
+        <select v-model="selectedChallenge" class="form-select mb-2">
+          <option v-for="challenge in challengeList" :key="challenge.id" :value="challenge.id">{{ challenge.name }}</option>
+        </select>
+        <div v-if="selectedChallenge">
+          <div v-for="team in teamList" :key="team.name" class="card mb-2">
+            <div class="card-header">
+              {{ team.name }}
+              <div
+                class="progress"
+                role="progressbar"
+                aria-label="Success striped example"
+                aria-valuenow="25"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <div
+                  class="progress-bar progress-bar-striped bg-danger"
+                  :style="{ width: team.prozent + '%' }"
+                >{{ team.prozent }} %</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div v-for="user in team.users" :key="user.id" class="row mb-1">
+                <div class="col-4 text-start">
+                  {{ user.username }}
+                </div>
+                <div class="col">
+                  <div
+                    class="progress"
+                    role="progressbar"
+                    aria-label="Success striped example"
+                    aria-valuenow="25"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <div
+                      class="progress-bar progress-bar-striped bg-secondary" :class="{ 'bg-success': user.prozent >= 100 }"
+                      :style="{ width: user.prozent + '%' }"
+                    >{{ user.count }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
     </div>
   </main>
 </template>
 
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue';
-import { useUserStore } from '@/stores/userStore';
 import { useDialogStore } from '@/stores/dialogStore';
 
-const userStore = useUserStore();
 const dialogStore = useDialogStore();
-const statusData = ref({});
 const vereineList = reactive([]);
+const challengeList = reactive([]);
+const selectedChallenge = ref(null);
+
+const teamList = computed(() => {
+  const teams = {};
+  let selChallenge;
+
+  for (const challenge of challengeList) {
+    if (challenge.id === selectedChallenge.value) {
+      selChallenge = challenge;
+      break;
+    }
+  }
+
+  if (!selChallenge) {
+    return teams;
+  }
+
+  for (const user of selChallenge.users) {
+    if (!teams[user.verein_id]) {
+      teams[user.verein_id] = {
+        name: user.verein_name,
+        prozent: 0,
+        endCount: 0,
+        sumCount: 0,
+        users: [],
+      };
+    }
+
+    teams[user.verein_id].users.push(user);
+  }
+
+  // prozentwerte der Teams berechnen
+  for (const teamKey in teams) {
+    const team = teams[teamKey];
+
+    for (const user of team.users) {
+      team.sumCount += user.count;
+      user.prozent = ((user.count / selChallenge.count) * 100).toFixed(1);
+    }
+
+    team.users.sort((a, b) => b.prozent - a.prozent);
+
+    team.endCount = selChallenge.count * team.users.length;
+    team.prozent = ((team.sumCount / team.endCount) * 100).toFixed(1);
+
+    console.log('team team', team);
+  }
+
+  // Teams nach Prozent absteigend sortieren
+  const sortedTeams = Object.values(teams).sort((a, b) => b.prozent - a.prozent);
+  return sortedTeams;
+});
 
 const getStatusData = async () => {
   let response;
@@ -32,7 +125,13 @@ const getStatusData = async () => {
     console.log('getStatusData result', result);
 
     if (response.ok) {
-      statusData.value = result;
+      challengeList.splice(0);
+
+      for (const challenge of result.challengeData) {
+        challengeList.push(challenge);
+      }
+
+      selectedChallenge.value = challengeList[0].id;
     } else {
       console.error('Error:', result.message);
     }

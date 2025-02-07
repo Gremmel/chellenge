@@ -11,7 +11,12 @@
           </div>
           <div class="card-body">
             <!-- gesamt zähler -->
-            noch {{ challenge.restCount }} von {{ challenge.count }} (noch {{ challenge.nochTage }} Tage)
+            <div v-if="challenge.restCount > 0">
+              noch {{ challenge.restCount }} von {{ challenge.count }} (noch {{ challenge.nochTage }} Tage)
+            </div>
+            <div v-else>
+              {{ challenge.countDone }} von {{ challenge.count }}
+            </div>
             <div
               class="progress"
               role="progressbar"
@@ -21,7 +26,7 @@
               aria-valuemax="100"
             >
               <div
-                class="progress-bar progress-bar-striped bg-primary"
+                class="progress-bar progress-bar-striped bg-primary" :class="{ 'bg-success': challenge.restCount <= 0 }"
                 :style="{ width: (challenge.countDone / challenge.count) * 100 + '%' }"
               ></div>
             </div>
@@ -41,7 +46,7 @@
               aria-valuemax="100"
             >
               <div
-                class="progress-bar progress-bar-striped bg-primary" :class="{ 'bg-success': challenge.restTagesCount <= 0 }"
+                class="progress-bar progress-bar-striped bg-secondary" :class="{ 'bg-success': challenge.restTagesCount <= 0 }"
                 :style="{ width: (challenge.countDatumHeute / challenge.tagesCount) * 100 + '%' }"
               ></div>
             </div>

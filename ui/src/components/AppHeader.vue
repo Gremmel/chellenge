@@ -12,7 +12,7 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
-                <RouterLink class="nav-link" to="/">Home</RouterLink>
+                <RouterLink class="nav-link" to="/">Counter</RouterLink>
               </li>
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/status">Status</RouterLink>

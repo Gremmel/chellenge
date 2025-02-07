@@ -177,6 +177,17 @@ const apiRoutes = {
         res.status(401).json({ message: 'setze Counter' });
       }
     });
+
+    // abrufen der Daten aller Benutzer und challenges
+    app.get('/api/getStatusData', authMiddleware.check('benutzer'), async (req, res) => {
+      try {
+        const challengeData = await challengesController.getStatusData(req.params.userId);
+
+        res.json({ challengeData });
+      } catch (error) {
+        res.status(401).json({ message: error.message });
+      }
+    });
   }
 };
 
