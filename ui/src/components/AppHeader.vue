@@ -25,10 +25,6 @@
         </div>
       </nav>
     </div>
-    <!-- Normaler Haeder -->
-    <div v-if="!isLoggedIn">
-      <RouterLink to="/login">Login</RouterLink>
-    </div>
   </header>
 </template>
 
