@@ -146,9 +146,7 @@ class ChallengesController {
         const userData = {
           id: user.id,
           username: user.username,
-          email: user.email,
           enabled: user.enabled,
-          roles: user.roles,
           verein_id: user.verein_id,
           verein_name: user.verein_name,
           verein_logo: user.verein_logo,
