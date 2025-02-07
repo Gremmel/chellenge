@@ -38,6 +38,11 @@
                 </ul>
               </td>
               <td>
+                <select v-model="user.verein_id" @change="changeVereinsId(user)" class="form-select">
+                  <option v-for="verein in vereineList" :key="verein.id" :value="verein.id">{{ verein.name }}</option>
+                </select>
+              </td>
+              <td>
                 <button @click="delUser(user.id, user.username)" type="button" class="btn btn-danger">
                   <i class="bi bi-trash"></i>
                 </button>
@@ -90,11 +95,40 @@
   import { onMounted, reactive, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { useUserStore } from '@/stores/userStore';
+  import { useDialogStore } from '@/stores/dialogStore';
 
   const userStore = useUserStore();
   const userList = reactive([]);
   const delUserName = ref('');
   const delUserId = ref(0);
+  const vereineList = reactive([]);
+  const dialogStore = useDialogStore();
+
+  async function changeVereinsId(user) {
+    console.log('changeVereinsId user', user);
+    try {
+      const response = await fetch('/api/setUserVereinsId', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user }),
+        credentials: 'include'  // Cookies mitsenden
+      });
+
+      if (!response.ok) {
+        console.log('Es gab ein Problem mit dem setzen der Vereins Id');
+        setTimeout(() => {
+          dialogStore.setParameter('Eehler beim setzen der Vereins Id', `${response.message}`, 'ok', null, '', null, null);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Es gab ein Problem mit dem setzen der Vereins Id', error);
+      setTimeout(() => {
+        dialogStore.setParameter('Es gab ein Problem mit dem setzen der Vereins Id', `${error}`, 'ok', null, '', null, null);
+      }, 1000);
+    }
+  }
 
   async function getUserList() {
     try {
@@ -140,9 +174,44 @@
     }
   }
 
+  async function getVereineList() {
+    try {
+      let response;
+      response = await fetch(`/api/getVereineList`, {
+        method: 'GET',
+        credentials: 'include'  // Cookies mitsenden
+      });
+
+      const result = await response.json();
+
+      console.log('getVerineList result', result);
+
+      if (response.ok) {
+        vereineList.splice(0);
+
+        for (const vereine of result.vereineList) {
+          vereineList.push(vereine);
+        }
+
+        getUserList();
+
+      } else {
+        setTimeout(() => {
+          dialogStore.setParameter('Fehlercode 103', `${response.status} ${response.statusText}`, 'ok', null, '', null, null);
+        }, 1000);
+        console.log(result.message || 'keine Daten vorhanden');
+      }
+    } catch (error) {
+      console.error('Es gab ein Problem mit dem Abrufen der getVereineList:', error);
+      setTimeout(() => {
+        dialogStore.setParameter('Fehlercode 107', `${error.message}`, 'ok', null, '', null, null);
+      }, 1000);
+    }
+  }
+
   onMounted(() => {
     console.log('onMounted');
-    getUserList();
+    getVereineList();
   });
 
   const router = useRouter();

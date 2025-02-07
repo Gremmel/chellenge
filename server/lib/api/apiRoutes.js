@@ -4,6 +4,7 @@ import loginController from './loginController.js';
 import sessionController from './sessionController.js';
 import userController from './userController.js';
 import challengesController from './challengesController.js';
+import vereineController from './vereineController.js';
 
 const apiRoutes = {
   init (app, config) {
@@ -66,6 +67,27 @@ const apiRoutes = {
         res.json({ user: session?.user });
       } else {
         res.json({ message: 'Keine session vorhanden' });
+      }
+    });
+
+    // alle Vereine abrufen
+    app.get('/api/getVereineList', authMiddleware.check('benutzer'), async (req, res) => {
+      try {
+        const vereineList = await vereineController.getVereine();
+
+        res.json({ vereineList });
+      } catch (error) {
+        res.status(401).json({ message: error.message });
+      }
+    });
+
+    app.post('/api/setUserVereinsId', authMiddleware.check('benutzer'), async (req, res) => {
+      try {
+        const io = await vereineController.setUserVereinsId(req.body.user);
+
+        res.json({ io });
+      } catch (error) {
+        res.status(401).json({ message: error.message });
       }
     });
 
