@@ -14,6 +14,9 @@
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/">Home</RouterLink>
               </li>
+              <li class="nav-item">
+                <RouterLink class="nav-link" to="/status">Status</RouterLink>
+              </li>
               <li v-if="showUserLink" class="nav-item">
                 <RouterLink class="nav-link" to="/users">Benutzer</RouterLink>
               </li>

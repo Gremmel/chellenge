@@ -5,6 +5,7 @@ import NewUserView from "../views/NewUserView.vue";
 import EditUserView from "../views/EditUserView.vue";
 import LoginView from "../views/LoginView.vue";
 import { useUserStore } from "@/stores/userStore";
+import StatusView from "../views/StatusView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +14,14 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+      meta: {
+        requiresRole: "benutzer",
+      },
+    },
+    {
+      path: "/status",
+      name: "status",
+      component: StatusView,
       meta: {
         requiresRole: "benutzer",
       },

@@ -2,7 +2,7 @@
   <main>
     <div class="text-center mt-4">
       <h2>
-        Challenge Februar
+        Herausforderungen
       </h2>
       <div class="container">
         <div v-for="challenge in challengeList" :key="challenge.id" class="card mb-2">
