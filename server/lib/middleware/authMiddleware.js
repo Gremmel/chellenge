@@ -52,9 +52,9 @@ class AuthMiddleware {
           logger.info('session verlägern', newToken);
           res.cookie('session_token', newToken, {
             httpOnly: true, // Cookie nicht durch JavaScript im Browser zugreifbar
-            // todo secure in der produktiv umgebung mit nginx auf true setzen
             secure: true, // true = wenn HTTPS
-            maxAge: 3600000, // Cookie-Lebensdauer (z.B. 1 Stunde)
+            // Cookie-Lebensdauer (z.B. 1 Monat)
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 1 Monat in Millisekunden
             sameSite: 'strict' // Schützt vor CSRF-Angriffen
           });
 

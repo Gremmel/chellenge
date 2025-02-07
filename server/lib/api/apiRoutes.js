@@ -3,7 +3,7 @@ import authMiddleware from '../middleware/authMiddleware.js';
 import loginController from './loginController.js';
 import sessionController from './sessionController.js';
 import userController from './userController.js';
-import chellengesController from './chellengesController.js';
+import challengesController from './challengesController.js';
 
 const apiRoutes = {
   init (app, config) {
@@ -130,9 +130,9 @@ const apiRoutes = {
       }
     });
 
-    app.get('/api/getChellenges/:userId', authMiddleware.check('benutzer'), async (req, res) => {
+    app.get('/api/getChallenges/:userId', authMiddleware.check('benutzer'), async (req, res) => {
       try {
-        const list = await chellengesController.getList(req.params.userId);
+        const list = await challengesController.getList(req.params.userId);
 
         res.json({ list });
       } catch (error) {
@@ -145,7 +145,7 @@ const apiRoutes = {
       logger.fatal('/api/setCount req.body', req.body);
 
       // Benutzer löschen
-      const io = await chellengesController.setCount(req.body);
+      const io = await challengesController.setCount(req.body);
 
       if (io) {
         // Erfolgsnachricht senden

@@ -19,7 +19,7 @@ const sessionController = {
       const { iat, exp, ...rest } = decoded;
 
       // Erstelle ein neues Token mit einer neuen Ablaufzeit
-      const newToken = jwt.sign(rest, this.config.JWT.secret, { expiresIn: '1h' });
+      const newToken = jwt.sign(rest, this.config.JWT.secret, { expiresIn: '30d' });
 
       // token in session austauschen
       for (const session of this.sessions) {
@@ -40,7 +40,7 @@ const sessionController = {
   },
 
   addSession (user) {
-    const token = jwt.sign({ user }, this.config.JWT.secret, { expiresIn: '1h' });
+    const token = jwt.sign({ user }, this.config.JWT.secret, { expiresIn: '30d' });
 
     const session = {
       token,

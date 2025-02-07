@@ -2,10 +2,10 @@
 import dbController from './dbController.js';
 import logger from '../logger.js';
 
-class ChellengesController {
+class ChallengesController {
   async getList (userId) {
     try {
-      const stmt = dbController.prepare(`SELECT * FROM chellenges ORDER BY name `);
+      const stmt = dbController.prepare(`SELECT * FROM challenges ORDER BY name `);
       const list = stmt.all();
 
       const stmt2 = dbController.prepare(`SELECT * FROM counter where userId = ?`);
@@ -14,7 +14,7 @@ class ChellengesController {
       for (const countEntry of counter) {
         for (const item of list) {
           // eslint-disable-next-line eqeqeq
-          if (countEntry.chellengeId === item.id && countEntry.userId == userId) {
+          if (countEntry.challengeId === item.id && countEntry.userId == userId) {
             item.countDone = countEntry.count;
             const today = new Date().toISOString().split('T')[0];
 
@@ -31,21 +31,21 @@ class ChellengesController {
 
       return list;
     } catch (error) {
-      logger.error('Fehler beim Abrufen der Chellenges:', error);
+      logger.error('Fehler beim Abrufen der Challenges:', error);
 
-      throw new Error('Konnte keine Chellenges abrufen.');
+      throw new Error('Konnte keine Challenges abrufen.');
     }
   }
 
   async setCount (counter) {
     try {
-      const stmt = dbController.prepare(`SELECT * FROM counter where userId = ? and chellengeId = ?`);
-      const count = stmt.get(counter.userId, counter.chellengeId);
+      const stmt = dbController.prepare(`SELECT * FROM counter where userId = ? and challengeId = ?`);
+      const count = stmt.get(counter.userId, counter.challengeId);
 
       if (count) {
-        dbController.prepare(`UPDATE counter SET count = ?, countDatumHeute = ?, datumHeute = ? WHERE userId = ? and chellengeId = ?`).run(counter.count, counter.countDatumHeute, counter.datumHeute, counter.userId, counter.chellengeId);
+        dbController.prepare(`UPDATE counter SET count = ?, countDatumHeute = ?, datumHeute = ? WHERE userId = ? and challengeId = ?`).run(counter.count, counter.countDatumHeute, counter.datumHeute, counter.userId, counter.challengeId);
       } else {
-        dbController.prepare(`INSERT INTO counter (userId, chellengeId, count, countDatumHeute, datumHeute) VALUES (?, ?, ?, ?, ?)`).run(counter.userId, counter.chellengeId, counter.count, counter.countDatumHeute, counter.datumHeute);
+        dbController.prepare(`INSERT INTO counter (userId, challengeId, count, countDatumHeute, datumHeute) VALUES (?, ?, ?, ?, ?)`).run(counter.userId, counter.challengeId, counter.count, counter.countDatumHeute, counter.datumHeute);
       }
 
       return true;
@@ -70,4 +70,4 @@ class ChellengesController {
   }
 }
 
-export default new ChellengesController();
+export default new ChallengesController();
