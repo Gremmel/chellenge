@@ -2,7 +2,7 @@
   <header class="app-header">
     <!-- Header Adminbereich angemeldet -->
     <div v-if="isLoggedIn">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">{{ userStore.user.username }}</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
