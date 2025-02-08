@@ -128,7 +128,10 @@ const getStatusData = async () => {
       challengeList.splice(0);
 
       for (const challenge of result.challengeData) {
-        challengeList.push(challenge);
+        // nur wenn challenge gestartet ist
+        if (new Date() >= new Date(challenge.startDatum)) {
+          challengeList.push(challenge);
+        }
       }
 
       selectedChallenge.value = challengeList[0].id;

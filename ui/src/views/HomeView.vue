@@ -7,7 +7,7 @@
       <div class="container">
         <div v-for="challenge in challengeList" :key="challenge.id" class="card mb-2">
           <div class="card-header">
-            {{ challenge.name }}
+            <span class="challengeName">{{ challenge.name }}</span>
             <button
               v-if="isAdmin"
               class="btn btn-danger btn-sm float-end"
@@ -17,36 +17,17 @@
             </button>
           </div>
           <div class="card-body">
-            <!-- gesamt zähler -->
-            <div v-if="challenge.finished">
-              {{ challenge.countDone }} von {{ challenge.count }} (geschlossen)
-            </div>
-            <div v-else-if="challenge.restCount > 0">
-              noch {{ challenge.restCount }} von {{ challenge.count }} (noch {{ challenge.nochTage }} Tage)
-            </div>
-            <div v-else>
-              {{ challenge.countDone }} von {{ challenge.count }}
-            </div>
-            <div
-              class="progress"
-              role="progressbar"
-              aria-label="Success striped example"
-              aria-valuenow="25"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            >
-              <div
-                class="progress-bar progress-bar-striped bg-primary" :class="{ 'bg-success': challenge.restCount <= 0 }"
-                :style="{ width: (challenge.countDone / challenge.count) * 100 + '%' }"
-              ></div>
-            </div>
-            <!-- tages zähler -->
-            <template v-if="challenge.finished === false">
-              <div v-if="challenge.restTagesCount > 0">
-                Heute noch {{ challenge.restTagesCount }} von {{ challenge.tagesCount }}
+            <!-- laufende challenge -->
+            <template v-if="challenge.started">
+              <!-- gesamt zähler -->
+              <div v-if="challenge.finished">
+                {{ challenge.countDone }} von {{ challenge.count }} (geschlossen)
+              </div>
+              <div v-else-if="challenge.restCount > 0">
+                noch {{ challenge.restCount }} von {{ challenge.count }} (noch {{ challenge.nochTage }} Tage)
               </div>
               <div v-else>
-                {{ challenge.countDatumHeute }} von {{ challenge.tagesCount }}
+                {{ challenge.countDone }} von {{ challenge.count }}
               </div>
               <div
                 class="progress"
@@ -57,28 +38,57 @@
                 aria-valuemax="100"
               >
                 <div
-                  class="progress-bar progress-bar-striped bg-secondary" :class="{ 'bg-success': challenge.restTagesCount <= 0 }"
-                  :style="{ width: (challenge.countDatumHeute / challenge.tagesCount) * 100 + '%' }"
+                  class="progress-bar progress-bar-striped bg-primary" :class="{ 'bg-success': challenge.restCount <= 0 }"
+                  :style="{ width: (challenge.countDone / challenge.count) * 100 + '%' }"
                 ></div>
               </div>
-              <div>
-                <div class="input-group mt-2">
-                  <label class="input-group-text">Anzahl</label>
-                  <input
-                    :disabled="disableButtons"
-                    type="number"
-                    class="form-control"
-                    v-model="challenge.countInput"
-                  >
-                  <button
-                    :disabled="disableButtons"
-                    class="btn btn-primary"
-                    @click="clickSave(challenge)"
-                  >
-                    Speichern
-                  </button>
+              <!-- tages zähler -->
+              <template v-if="challenge.finished === false">
+                <div v-if="challenge.restTagesCount > 0">
+                  Heute noch {{ challenge.restTagesCount }} von {{ challenge.tagesCount }}
                 </div>
-              </div>
+                <div v-else>
+                  {{ challenge.countDatumHeute }} von {{ challenge.tagesCount }}
+                </div>
+                <div
+                  class="progress"
+                  role="progressbar"
+                  aria-label="Success striped example"
+                  aria-valuenow="25"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  <div
+                    class="progress-bar progress-bar-striped bg-secondary" :class="{ 'bg-success': challenge.restTagesCount <= 0 }"
+                    :style="{ width: (challenge.countDatumHeute / challenge.tagesCount) * 100 + '%' }"
+                  ></div>
+                </div>
+                <div>
+                  <div class="input-group mt-2">
+                    <label class="input-group-text">Anzahl</label>
+                    <input
+                      :disabled="disableButtons"
+                      type="number"
+                      class="form-control"
+                      v-model="challenge.countInput"
+                    >
+                    <button
+                      :disabled="disableButtons"
+                      class="btn btn-primary"
+                      @click="clickSave(challenge)"
+                    >
+                      Speichern
+                    </button>
+                  </div>
+                </div>
+              </template>
+            </template>
+            <!-- noch nicht gestartet -->
+            <template v-else>
+              startet in {{ challenge.nochTage }} Tagen<br>
+              Start: {{ new Date(challenge.startDatum).toLocaleDateString('de-DE') }} - Ende: {{ new Date(challenge.endDatum).toLocaleDateString('de-DE') }}<br>
+              laufzeit: {{ challenge.zeitraumTage }} Tage <br>
+                Übungen pro Tag {{ Math.ceil(challenge.count / challenge.zeitraumTage) }}
             </template>
           </div>
         </div>
@@ -200,10 +210,21 @@ const challengeList = computed(() => {
       finished = true;
     }
 
+    let started = true;
+
+    // wenn startdatum der challenge größer als heute ist, dann countDone = 0
+    if (new Date(challenge.startDatum) > new Date()) {
+      started = false;
+    }
+
     let nochTage;
     let tagesCount;
+    let zeitraumTage = Math.ceil((new Date(challenge.endDatum) - new Date(challenge.startDatum)) / (1000 * 60 * 60 * 24));
 
-    if (!challenge.finished) {
+    if (!started) {
+      nochTage = Math.ceil((new Date(challenge.startDatum) - new Date()) / (1000 * 60 * 60 * 24));
+      tagesCount = 0;
+    } else if (!finished) {
       // Anzahl Tage bis zum Ende der Challenge
       nochTage = Math.ceil((new Date(challenge.endDatum) - new Date()) / (1000 * 60 * 60 * 24));
       // Anzahl Übungen pro tag
@@ -226,6 +247,8 @@ const challengeList = computed(() => {
       nochTage,
       tagesCount,
       finished,
+      started,
+      zeitraumTage,
       restTagesCount: tagesCount - challenge.countDatumHeute,
       count: challenge.count,
       countDone: challenge.countDone,
@@ -272,5 +295,9 @@ onMounted(async () => {
   margin-left: auto;
   margin-right: auto;
   max-width: 80%;
+}
+
+.challengeName {
+  font-size: 1.5em;
 }
 </style>
