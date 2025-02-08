@@ -217,6 +217,12 @@ const challengeList = computed(() => {
       started = false;
     }
 
+    let active = false;
+
+    if (started && !finished) {
+      active = true;
+    }
+
     let nochTage;
     let tagesCount;
     let zeitraumTage = Math.ceil((new Date(challenge.endDatum) - new Date(challenge.startDatum)) / (1000 * 60 * 60 * 24));
@@ -248,6 +254,7 @@ const challengeList = computed(() => {
       tagesCount,
       finished,
       started,
+      active,
       zeitraumTage,
       restTagesCount: tagesCount - challenge.countDatumHeute,
       count: challenge.count,
@@ -255,6 +262,17 @@ const challengeList = computed(() => {
       restCount: challenge.count - challenge.countDone || challenge.count
     });
   }
+
+  list.sort((a, b) => {
+    if (a.active && !b.active) return -1;
+    if (!a.active && b.active) return 1;
+    if (!a.started && b.started) return -1;
+    if (a.started && !b.started) return 1;
+    if (a.finished && !b.finished) return 1;
+    if (!a.finished && b.finished) return -1;
+    return 0;
+  });
+
   return list;
 });
 
