@@ -8,11 +8,18 @@
         <div v-for="challenge in challengeList" :key="challenge.id" class="card mb-2">
           <div class="card-header">
             {{ challenge.name }}
+            <button
+              v-if="isAdmin"
+              class="btn btn-danger btn-sm float-end"
+              @click="clickDeleteChallenge(challenge)"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
           </div>
           <div class="card-body">
             <!-- gesamt zähler -->
             <div v-if="challenge.finished">
-              {{ challenge.restCount }} von {{ challenge.count }} (geschlossen)
+              {{ challenge.countDone }} von {{ challenge.count }} (geschlossen)
             </div>
             <div v-else-if="challenge.restCount > 0">
               noch {{ challenge.restCount }} von {{ challenge.count }} (noch {{ challenge.nochTage }} Tage)
@@ -84,10 +91,50 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
+import { useDialogStore } from '@/stores/dialogStore';
 
 const challenges = reactive([]);
 const userStore = useUserStore();
+const dialogStore = useDialogStore();
 const disableButtons = ref(false);
+const delChallengeId = ref(0);
+
+const isAdmin = computed(() => {
+  return userStore.hasRole('admin');
+});
+
+const deleteChallenge = async () => {
+  console.log('deleteChallenge challengeId', delChallengeId.value);
+  let response;
+
+  try {
+    response = await fetch(`/api/deleteChallenge/${delChallengeId.value}`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      getChallenges();
+    } else {
+      console.error('Error:', result.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+const clickDeleteChallenge = (challenge) => {
+  console.log('clickDeleteChallenge', challenge.id);
+  delChallengeId.value = challenge.id;
+
+  dialogStore.openDeleteDialog(
+    'Herausforderung löschen',
+    `die Herausforderung <b>${challenge.name}</b> wirklich löschen?`,
+    deleteChallenge,
+  );
+}
 
 const sendCounter = async (counterObj) => {
   let response;

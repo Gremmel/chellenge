@@ -162,6 +162,30 @@ const apiRoutes = {
       }
     });
 
+    // abrufen der Daten aller Benutzer und challenges
+    app.post('/api/deleteChallenge/:challengeId', authMiddleware.check('admin'), async (req, res) => {
+      try {
+        logger.fatal('/api/deleteChallenge req.params', req.params);
+        const io = await challengesController.deleteChallenge(req.params.challengeId);
+
+        res.json({ io });
+      } catch (error) {
+        res.status(501).json({ message: error.message });
+      }
+    });
+
+    // abrufen der Daten aller Benutzer und challenges
+    app.post('/api/addChallenge', authMiddleware.check('admin'), async (req, res) => {
+      try {
+        logger.fatal('/api/addChallenge', req.body);
+        const io = await challengesController.addChallenge(req.body);
+
+        res.json({ io });
+      } catch (error) {
+        res.status(501).json({ message: error.message });
+      }
+    });
+
     // setze counter
     app.post('/api/setCount', authMiddleware.check('benutzer'), async (req, res) => {
       logger.fatal('/api/setCount req.body', req.body);

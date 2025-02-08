@@ -6,6 +6,7 @@ import EditUserView from "../views/EditUserView.vue";
 import LoginView from "../views/LoginView.vue";
 import { useUserStore } from "@/stores/userStore";
 import StatusView from "../views/StatusView.vue";
+import NewChallengeVue from "@/views/NewChallengeVue.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +56,14 @@ const router = createRouter({
       name: "login",
       component: LoginView,
     },
+    {
+      path: "/newChallenge",
+      name: "newChallenge",
+      component: NewChallengeVue,
+      meta: {
+        requiresRole: "admin",
+      },
+    }
   ],
 });
 

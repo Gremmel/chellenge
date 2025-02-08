@@ -5,9 +5,16 @@ import logger from '../logger.js';
 import bcrypt from 'bcrypt';
 
 class UserController {
-  getUsers () {
+  getUsers (onlyEnabled = false) {
     try {
-      const stmt = dbController.prepare('SELECT fos_user.id as id, fos_user.password as password, fos_user.username as username, fos_user.email as email, fos_user.enabled as enabled, fos_user.roles as roles,verein.id as verein_id, verein.name as verein_name, verein.logo as verein_logo FROM fos_user LEFT JOIN user_verein ON user_verein.user_id=fos_user.id LEFT JOIN verein ON verein.id= user_verein.verein_id WHERE true');
+      let stmt;
+
+      if (onlyEnabled) {
+        stmt = dbController.prepare('SELECT fos_user.id as id, fos_user.password as password, fos_user.username as username, fos_user.email as email, fos_user.enabled as enabled, fos_user.roles as roles,verein.id as verein_id, verein.name as verein_name, verein.logo as verein_logo FROM fos_user LEFT JOIN user_verein ON user_verein.user_id=fos_user.id LEFT JOIN verein ON verein.id= user_verein.verein_id WHERE enabled = 1');
+      } else {
+        stmt = dbController.prepare('SELECT fos_user.id as id, fos_user.password as password, fos_user.username as username, fos_user.email as email, fos_user.enabled as enabled, fos_user.roles as roles,verein.id as verein_id, verein.name as verein_name, verein.logo as verein_logo FROM fos_user LEFT JOIN user_verein ON user_verein.user_id=fos_user.id LEFT JOIN verein ON verein.id= user_verein.verein_id WHERE true');
+      }
+
       const users = stmt.all();
 
       // passwort hash entfernen

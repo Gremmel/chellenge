@@ -17,8 +17,14 @@
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/status">Status</RouterLink>
               </li>
-              <li v-if="showUserLink" class="nav-item">
-                <RouterLink class="nav-link" to="/users">Benutzer</RouterLink>
+              <li v-if="isAdmin" class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Admin
+                </a>
+                <ul class="dropdown-menu">
+                  <li><RouterLink class="dropdown-item" to="/users">Benutzer</RouterLink></li>
+                  <li><RouterLink class="dropdown-item" to="/newChallenge">New Challenge</RouterLink></li>
+                </ul>
               </li>
             </ul>
             <div class="d-flex">
@@ -42,11 +48,8 @@ const userStore = useUserStore();
 const isLoggedIn = computed(() => userStore.isLoggedIn);
 const router = useRouter();
 
-// Ermitteln ob der Benutzer die Berechtigung für den Link Benutzer hat
-const userRoute = router.getRoutes().find(route => route.name === 'users');
-const userRouteRole = userRoute.meta.requiresRole;
-const showUserLink = computed(() => {
-  return userStore.hasRole(userRouteRole);
+const isAdmin = computed(() => {
+  return userStore.hasRole('admin');
 });
 
 // Benutzer abmelden

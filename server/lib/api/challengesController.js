@@ -99,7 +99,7 @@ class ChallengesController {
     // ];
 
     // alle Benutzer abrufen
-    const userList = userController.getUsers();
+    const userList = userController.getUsers(true);
 
     logger.warn('userList', userList);
 
@@ -168,6 +168,32 @@ class ChallengesController {
     }
 
     return result;
+  }
+
+  // Challenge löschen
+  deleteChallenge (challengeId) {
+    try {
+      dbController.prepare(`DELETE FROM challenges WHERE id = ?`).run(challengeId);
+
+      return true;
+    } catch (error) {
+      logger.error('Fehler beim Löschen der Challenge:', error);
+
+      throw new Error('Konnte die Challenge nicht löschen.');
+    }
+  }
+
+  // Challenge hinzufügen
+  addChallenge (challenge) {
+    try {
+      dbController.prepare(`INSERT INTO challenges (name, count, startDatum, endDatum) VALUES (?, ?, ?, ?)`).run(challenge.name, challenge.count, challenge.startDatum, challenge.endDatum);
+
+      return true;
+    } catch (error) {
+      logger.error('Fehler beim Hinzufügen der Challenge:', error);
+
+      throw new Error('Konnte die Challenge nicht hinzufügen.');
+    }
   }
 }
 

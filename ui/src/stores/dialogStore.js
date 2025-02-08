@@ -17,7 +17,18 @@ export const useDialogStore = defineStore('dialogStore', {
   },
 
   actions: {
-    setParameter (title,message,okButtonText,okButtonClass,cancelButtonText,cancelButtonClass,okFunction) {
+    openDeleteDialog (title, message, okFunction) {
+      this.dialogTitle = title;
+      this.dialogMessage = message;
+      this.okButtonText = 'Löschen';
+      this.okButtonClass = 'btn-danger';
+      this.cancelButtonText = 'Abbrechen';
+      this.cancelButtonClass = 'btn-secondary';
+      this.okFunction = okFunction;
+      this.showDialog = true;
+    },
+
+    setParameter (title, message, okButtonText, okButtonClass, cancelButtonText, cancelButtonClass, okFunction) {
       this.dialogTitle = title;
       this.dialogMessage = message;
       this.okButtonText = okButtonText;
