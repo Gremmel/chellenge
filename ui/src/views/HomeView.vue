@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed, onMounted } from 'vue';
+import { reactive, ref, computed, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import { useDialogStore } from '@/stores/dialogStore';
 
@@ -108,6 +108,7 @@ const userStore = useUserStore();
 const dialogStore = useDialogStore();
 const disableButtons = ref(false);
 const delChallengeId = ref(0);
+const getChallengesDate = ref(new Date());
 
 const isAdmin = computed(() => {
   return userStore.hasRole('admin');
@@ -302,9 +303,31 @@ const getChallenges = async () => {
   }
 }
 
+let timeOutUpdate;
+
+const checkLastUpdate = () => {
+  timeOutUpdate = setTimeout(() => {
+    const now = new Date();
+    if (now.getDate() !== getChallengesDate.value.getDate()) {
+      console.log('Neuer Tag begonnen, getChallenges wird aufgerufen');
+      getChallenges();
+      getChallengesDate.value = now;
+    }
+    checkLastUpdate();
+  }, 1 * 60 * 1000);
+
+}
+
 onMounted(async () => {
   getChallenges();
+  checkLastUpdate();
 });
+
+onUnmounted(() => {
+  console.log('onUnmounted');
+  clearTimeout(timeOutUpdate);
+});
+
 </script>
 
 <style scoped>
