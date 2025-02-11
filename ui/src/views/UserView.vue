@@ -6,54 +6,59 @@
           <div class="col"><h2>Benutzerliste</h2></div>
           <div class="col-auto"><button type="button" @click="goToNewUser" class="btn btn-success">Neuer Benutzer</button></div>
         </div>
-        <table class="table table">
-          <thead>
-            <tr>
-              <th scope="col">Benutzername</th>
-              <th scope="col">E-Mail</th>
-              <th scope="col">Aktiv</th>
-              <th scope="col">Rollen</th>
-              <th scope="col">Team</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in userList" :key="user.username">
-              <td>{{ user.username }}</td>
-              <td>{{ user.email }}</td>
-              <td>
-                <input
-                  v-if="user.enabled === '1'"
-                  type="checkbox"
-                  :checked="user.enabled === '1'"
-                  style="pointer-events: none"
-                  class="form-check-input form-check-input-black"
-                  readonly
-                />
-              </td>
-              <td>
-                <ul class="list-group list-group-flush">
-                  <li v-for="role in user.parsedRoles" :key="role" class="">
-                    {{ role }}
-                  </li>
-                </ul>
-              </td>
-              <td>
-                <select v-model="user.verein_id" @change="changeVereinsId(user)" class="form-select">
-                  <option v-for="verein in vereineList" :key="verein.id" :value="verein.id">{{ verein.name }}</option>
-                </select>
-              </td>
-              <td>
-                <button @click="delUser(user.id, user.username)" type="button" class="btn btn-danger">
-                  <i class="bi bi-trash"></i>
-                </button>
-                <button @click="editUser(user.id)" class="btn btn-primary ms-1">
-                  <i class="bi bi-pencil"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <template v-for="user in userList" :key="user.username">
+          <div class="card mb-1">
+            <div class="card-header">
+              <div class="row">
+                <div class="col">
+                  <h5>{{ user.username }}</h5>
+                </div>
+                <div class="col">
+                  <div class="d-flex justify-content-end">
+                    <button @click="delUser(user.id, user.username)" type="button" class="btn btn-danger">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    <button @click="editUser(user.id)" class="btn btn-primary ms-1">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  aktiv:
+                </div>
+                <div class="col">
+                  <input
+                    v-if="user.enabled === '1'"
+                    type="checkbox"
+                    :checked="user.enabled === '1'"
+                    style="pointer-events: none"
+                    class="form-check-input form-check-input-black"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  Rollen:
+                </div>
+                <div class="col">
+                  <ul class="list-group list-group-flush">
+                    <li v-for="role in user.parsedRoles" :key="role" class="">
+                      {{ role }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <select v-model="user.verein_id" @change="changeVereinsId(user)" class="form-select">
+                <option v-for="verein in vereineList" :key="verein.id" :value="verein.id">{{ verein.name }}</option>
+              </select>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
 

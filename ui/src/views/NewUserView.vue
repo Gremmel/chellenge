@@ -20,7 +20,6 @@
           id="email"
           v-model="form.email"
           class="form-control"
-          required
         />
       </div>
 
@@ -86,7 +85,7 @@
   const submitted = ref(false);
   const passwordCheck = computed(() => form.value.password === form.value.password2);
   const disabledSubmit = computed(() => {
-    if (form.value.username === '' || form.value.email === '' || form.value.password === '' || !passwordCheck.value) {
+    if (form.value.username === '' || form.value.password === '' || !passwordCheck.value) {
       return true;
     } else {
       return false;
@@ -104,7 +103,7 @@
         },
         body: JSON.stringify({
           username: form.value.username,
-          email: form.value.email,
+          email: 'no@mail.de',
           password: form.value.password,
           roles: JSON.stringify(selectedRoles.value),
           enabled: '1'
