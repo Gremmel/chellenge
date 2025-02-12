@@ -22,6 +22,7 @@
 
     <h2>4. Speicherdauer der Daten</h2>
     <p>Die personenbezogenen Daten werden gespeichert, solange der Nutzer ein Konto auf der Website hat. Eine Löschung erfolgt auf Anfrage an <a href="mailto:challenge@soseies.de">challenge@soseies.de</a>.</p>
+    <p>Die Übungszähler einer Challenge werden nur so lange gespeichert, bis die Challenge gelöscht wird.</p>
 
     <h2>5. Weitergabe von Daten</h2>
     <p>Es erfolgt keine Weitergabe der erhobenen Daten an Dritte.</p>
