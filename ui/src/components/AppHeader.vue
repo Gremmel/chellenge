@@ -17,15 +17,6 @@
               <li class="nav-item">
                 <RouterLink class="nav-link" to="/status">Status</RouterLink>
               </li>
-              <li v-if="isAdmin" class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Admin
-                </a>
-                <ul class="dropdown-menu">
-                  <li><RouterLink class="dropdown-item" to="/users">Benutzer</RouterLink></li>
-                  <li><RouterLink class="dropdown-item" to="/newChallenge">New Challenge</RouterLink></li>
-                </ul>
-              </li>
             </ul>
             <div class="d-flex">
               <div class="btn-group">
@@ -33,8 +24,14 @@
                   ...
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
+                  <template v-if="isAdmin">
+                    <li><RouterLink class="dropdown-item" to="/users">Benutzer</RouterLink></li>
+                    <li><RouterLink class="dropdown-item" to="/newChallenge">New Challenge</RouterLink></li>
+                    <hr>
+                  </template>
                   <li><RouterLink class="dropdown-item" to="/impressum">Impressum</RouterLink></li>
                   <li><RouterLink class="dropdown-item" to="/dsgvo">Datenschutzerklärung</RouterLink></li>
+                  <hr>
                   <li><a @click="doLogout" class="dropdown-item" href="#">Logout</a></li>
                 </ul>
               </div>
