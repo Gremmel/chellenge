@@ -1,20 +1,23 @@
 <template>
   <header class="app-header">
     <!-- Header Adminbereich angemeldet -->
-    <div v-if="isLoggedIn">
+    <div>
       <nav class="navbar navbar-expand navbar-dark bg-dark">
         <div class="container-fluid">
-          <RouterLink class="navbar-brand" to="/changePassword">{{ userStore.user.username }}</RouterLink>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          <RouterLink v-if="isLoggedIn" class="navbar-brand" to="/changePassword">{{ userStore.user.username }}</RouterLink>
+          <button v-if="isLoggedIn" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-              <li class="nav-item">
+              <li v-if="!isLoggedIn" class="nav-item">
+                <RouterLink class="nav-link" to="/login">Login</RouterLink>
+              </li>
+              <li v-if="isLoggedIn" class="nav-item">
                 <RouterLink class="nav-link" to="/">Counter</RouterLink>
               </li>
-              <li class="nav-item">
+              <li v-if="isLoggedIn" class="nav-item">
                 <RouterLink class="nav-link" to="/status">Status</RouterLink>
               </li>
             </ul>
@@ -31,8 +34,8 @@
                   </template>
                   <li><RouterLink class="dropdown-item" to="/impressum">Impressum</RouterLink></li>
                   <li><RouterLink class="dropdown-item" to="/dsgvo">Datenschutzerklärung</RouterLink></li>
-                  <hr>
-                  <li><a @click="doLogout" class="dropdown-item" href="#">Logout</a></li>
+                  <hr v-if="isLoggedIn">
+                  <li v-if="isLoggedIn"><a @click="doLogout" class="dropdown-item" href="#">Logout</a></li>
                 </ul>
               </div>
 
