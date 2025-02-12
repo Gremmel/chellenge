@@ -46,12 +46,14 @@ export default {
 
     const handleLogin = async () => {
       try {
+        const userName = username.value;
+
         const response = await fetch('/api/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ username: username.value, password: password.value }),  // ref() braucht .value
+          body: JSON.stringify({ username: userName.trim(), password: password.value }),  // ref() braucht .value
           credentials: 'include'  // Cookies mitsenden
         });
 
