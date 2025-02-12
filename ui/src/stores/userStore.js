@@ -9,6 +9,7 @@ export const useUserStore = defineStore('userStore', {
     getSessionDataFinished: false,
     sportfeste: null,
     selectedSportfest: null,
+    selectedChallenge: null,
   }),
 
   getters: {
@@ -16,6 +17,10 @@ export const useUserStore = defineStore('userStore', {
   },
 
   actions: {
+    setSelectedChallenge (challenge) {
+      this.selectedChallenge = challenge;
+    },
+
     setMessage (message) {
       this.message = message;
     },

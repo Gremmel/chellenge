@@ -108,7 +108,6 @@ const userStore = useUserStore();
 const dialogStore = useDialogStore();
 const disableButtons = ref(false);
 const delChallengeId = ref(0);
-const getChallengesDate = ref(new Date());
 
 const isAdmin = computed(() => {
   return userStore.hasRole('admin');
@@ -172,6 +171,8 @@ const sendCounter = async (counterObj) => {
 
 // Neuen Zähler speichern
 const clickSave = async (challengeData) => {
+  startTimer();
+
   if (challengeData.countInput === undefined || challengeData.countInput === '') {
     return;
   }
@@ -295,6 +296,8 @@ const getChallenges = async () => {
       for (const challange of result.list) {
         challenges.push(challange);
       }
+
+      startTimer();
     } else {
       console.error('Error:', result.message);
     }
@@ -303,29 +306,24 @@ const getChallenges = async () => {
   }
 }
 
-let timeOutUpdate;
+let timerValue;
 
-const checkLastUpdate = () => {
-  timeOutUpdate = setTimeout(() => {
-    const now = new Date();
-    if (now.getDate() !== getChallengesDate.value.getDate()) {
-      console.log('Neuer Tag begonnen, getChallenges wird aufgerufen');
-      getChallenges();
-      getChallengesDate.value = now;
-    }
-    checkLastUpdate();
-  }, 1 * 60 * 1000);
+const startTimer = () => {
+  clearTimeout(timerValue);
 
+  timerValue = setTimeout(() => {
+    console.log('timer getChallenges');
+    getChallenges();
+  }, 60 * 60 * 1000);
 }
 
 onMounted(async () => {
   getChallenges();
-  checkLastUpdate();
 });
 
 onUnmounted(() => {
   console.log('onUnmounted');
-  clearTimeout(timeOutUpdate);
+  clearTimeout(timerValue);
 });
 
 </script>

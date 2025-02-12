@@ -86,8 +86,6 @@ class ChallengesController {
 
     const result = [];
 
-    logger.fatal('challangesList', challangesList);
-
     // challangesList [
     //   {
     //     id: 1,
@@ -100,8 +98,6 @@ class ChallengesController {
 
     // alle Benutzer abrufen
     const userList = userController.getUsers(true);
-
-    logger.warn('userList', userList);
 
     // userList [
     //   {
@@ -119,8 +115,6 @@ class ChallengesController {
     // alle counter abrufen
     const stmt2 = dbController.prepare(`SELECT * FROM counter`);
     const counterList = stmt2.all();
-
-    logger.info('counterList', counterList);
 
     // counterList [
     //   {
