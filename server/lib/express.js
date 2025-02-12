@@ -18,7 +18,6 @@ const expressApp = {
   port: 3000,
 
   init (config) {
-    logger.fatal(config);
     authMiddleware.setSecret(config.JWT.secret);
 
     // Verwende CORS für alle Routen
