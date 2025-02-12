@@ -59,8 +59,6 @@ const sessionController = {
 
   getSessionByToken (token) {
     for (const session of this.sessions) {
-      logger.warn(session.token);
-      logger.debug(token);
       if (session.token === token) {
         return session;
       }
