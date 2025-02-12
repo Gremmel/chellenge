@@ -9,6 +9,7 @@ import StatusView from "../views/StatusView.vue";
 import NewChallengeVue from "@/views/NewChallengeVue.vue";
 import DSGVO from "../views/DSGVO.vue";
 import Impressum from "@/views/Impressum.vue";
+import ChangePassword from "@/views/ChangePassword.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +52,14 @@ const router = createRouter({
       component: EditUserView,
       meta: {
         requiresRole: "admin",
+      },
+    },
+    {
+      path: "/changePassword",
+      name: "changePassword",
+      component: ChangePassword,
+      meta: {
+        requiresRole: "benutzer",
       },
     },
     {

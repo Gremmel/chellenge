@@ -136,6 +136,21 @@ const apiRoutes = {
       }
     });
 
+    // Benutzer ändern
+    app.post('/api/changePassword', authMiddleware.check('benutzer'), async (req, res) => {
+      logger.fatal('/api/changePassword req.body', req.body);
+
+      // Benutzer ändern
+      const result = await userController.changePassword(req.body);
+
+      if (result) {
+        // Erfolgsnachricht senden
+        res.json({ result });
+      } else {
+        res.status(401).json({ message: 'Fehler beim ändern des Passworts' });
+      }
+    });
+
     // löscht einen User
     app.post('/api/deluser', authMiddleware.check('admin'), async (req, res) => {
       logger.fatal('/api/deluser req.body', req.body);
