@@ -12,13 +12,10 @@ const apiRoutes = {
 
     // API-Routen
     app.post('/api/login', async (req, res) => {
-      logger.fatal('/api/login req.body', req.body);
       const { username, password } = req.body;
 
       // Überprüfe Benutzername und Passwort
       const user = await loginController.loginUser(username, password);
-
-      logger.fatal('api login user', user);
 
       if (user) {
         // session erzeugen
@@ -36,6 +33,7 @@ const apiRoutes = {
         res.json({ user });
       } else {
         // Falsche Zugangsdaten
+        logger.error('Ungültiger Benutzername oder Passwort', username);
         res.status(401).json({ message: 'Ungültiger Benutzername oder Passwort' });
       }
     });
@@ -58,8 +56,6 @@ const apiRoutes = {
     // Logout-Route (GET)
     app.get('/api/getSession', (req, res) => {
       const token = req.cookies.session_token;
-
-      logger.info('/api/getSession', token);
 
       if (token) {
         const session = sessionController.getSessionByToken(token);

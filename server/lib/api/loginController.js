@@ -24,7 +24,7 @@ class LoginController {
       const isOk = await this.verifyPassword(password, user.password);
 
       if (isOk) {
-        logger.info('erfolgreich', user);
+        logger.info('login erfolgreich', username);
 
         delete user.password;
 

@@ -24,12 +24,9 @@ const sessionController = {
       // token in session austauschen
       for (const session of this.sessions) {
         if (session.token === oldToken) {
-          logger.info('tausche token in session weil verlängert');
           session.token = newToken;
         }
       }
-
-      logger.fatal('extendToken', this.sessions);
 
       return newToken;
     } catch (error) {
@@ -49,8 +46,6 @@ const sessionController = {
 
     this.sessions.push(session);
 
-    logger.warn('add session', this.sessions);
-
     return token;
   },
 
@@ -63,7 +58,6 @@ const sessionController = {
   },
 
   getSessionByToken (token) {
-    logger.fatal('getSessionByToken', this.sessions);
     for (const session of this.sessions) {
       logger.warn(session.token);
       logger.debug(token);
@@ -71,8 +65,6 @@ const sessionController = {
         return session;
       }
     }
-
-    logger.warn('no getSesstionByToken found');
 
     return null;
   }
