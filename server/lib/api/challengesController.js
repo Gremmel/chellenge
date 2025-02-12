@@ -103,7 +103,7 @@ class ChallengesController {
     //   {
     //     id: 14,
     //     username: 'Gremmel',
-    //     email: 'mc@soseies.de',
+    //     email: 'challenge@soseies.de',
     //     enabled: '1',
     //     roles: '["admin","benutzer"]',
     //     verein_id: 1,

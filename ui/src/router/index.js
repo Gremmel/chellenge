@@ -7,6 +7,8 @@ import LoginView from "../views/LoginView.vue";
 import { useUserStore } from "@/stores/userStore";
 import StatusView from "../views/StatusView.vue";
 import NewChallengeVue from "@/views/NewChallengeVue.vue";
+import DSGVO from "../views/DSGVO.vue";
+import Impressum from "@/views/Impressum.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +57,16 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
+    },
+    {
+      path: "/dsgvo",
+      name: "dsgvo",
+      component: DSGVO,
+    },
+    {
+      path: "/impressum",
+      name: "impressum",
+      component: Impressum,
     },
     {
       path: "/newChallenge",

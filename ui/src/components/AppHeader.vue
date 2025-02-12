@@ -28,7 +28,17 @@
               </li>
             </ul>
             <div class="d-flex">
-              <button @click="doLogout" class="btn btn-outline-success" type="button">Logout</button>
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  ...
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><RouterLink class="dropdown-item" to="/impressum">Impressum</RouterLink></li>
+                  <li><RouterLink class="dropdown-item" to="/dsgvo">Datenschutzerklärung</RouterLink></li>
+                  <li><a @click="doLogout" class="dropdown-item" href="#">Logout</a></li>
+                </ul>
+              </div>
+
             </div>
           </div>
         </div>
