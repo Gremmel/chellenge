@@ -22,9 +22,14 @@
                   aria-valuemax="100"
                 >
                   <div
-                    class="progress-bar progress-bar-striped bg-danger"
+                    class="progress-bar progress-bar-striped bg-danger d-flex justify-content-between"
                     :style="{ width: team.prozent + '%' }"
-                  >{{ team.prozent }} %</div>
+                  >
+                    <span v-if="team.prozent >= 10"> {{ team.prozent }} % <span v-if="team.prozent >= 80">( noch {{ team.restCount }} )</span></span>
+
+                  </div>
+                  <span v-if="team.prozent < 10" class="ms-1"> {{ team.prozent }} % </span>
+                  <span v-if="team.prozent < 80" class="ms-auto me-2">noch {{ team.restCount }}</span>
                 </div>
               </div>
               <div class="card-body">
@@ -44,7 +49,10 @@
                       <div
                         class="progress-bar progress-bar-striped bg-secondary" :class="{ 'bg-success': user.prozent >= 100 }"
                         :style="{ width: user.prozent + '%' }"
-                      >{{ user.count }}</div>
+                      >
+                        <span v-if="user.prozent >= 10 || isMobileView === false">{{ user.count }}</span>
+                      </div>
+                      <span v-if="user.prozent < 10 && isMobileView === true" class="ms-1">{{ user.count }}</span>
                     </div>
                   </div>
                 </div>
@@ -67,6 +75,8 @@ const userStore = useUserStore();
 const vereineList = reactive([]);
 const challengeList = reactive([]);
 const selectedChallenge = ref(null);
+
+const isMobileView = ref(window.innerWidth <= 768);
 
 const teamList = computed(() => {
   const teams = {};
@@ -111,6 +121,7 @@ const teamList = computed(() => {
     team.users.sort((a, b) => b.prozent - a.prozent);
 
     team.endCount = selChallenge.count * team.users.length;
+    team.restCount = team.endCount - team.sumCount;
     team.prozent = ((team.sumCount / team.endCount) * 100).toFixed(1);
 
     console.log('team team', team);
