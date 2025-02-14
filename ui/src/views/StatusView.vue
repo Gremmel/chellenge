@@ -22,7 +22,8 @@
                   aria-valuemax="100"
                 >
                   <div
-                    class="progress-bar progress-bar-striped bg-danger d-flex justify-content-between"
+                    class="progress-bar progress-bar-striped d-flex justify-content-between"
+                    :class="{ 'bg-success': team.prozent >= team.neededProzent, 'bg-danger': team.prozent <= team.neededProzent }"
                     :style="{ width: team.prozent + '%' }"
                   >
                     <span v-if="team.prozent >= 10"> {{ team.prozent }} % <span v-if="team.prozent >= 80">( noch {{ team.restCount }} )</span></span>
@@ -128,6 +129,20 @@ const teamList = computed(() => {
     team.endCount = selChallenge.count * team.users.length;
     team.restCount = team.endCount - team.sumCount;
     team.prozent = ((team.sumCount / team.endCount) * 100).toFixed(1);
+
+    // Berechne die benötigten Prozente basierend auf der verbleibenden Zeit
+    const challengeStartDate = new Date(selChallenge.startDatum);
+    const challengeEndDate = new Date(selChallenge.endDatum);
+    const currentDate = new Date();
+
+    const totalChallengeDuration = (challengeEndDate - challengeStartDate) / (1000 * 60 * 60 * 24); // in Tagen
+    const elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate) / (1000 * 60 * 60 * 24)); // in Tagen
+    // const remainingChallengeDuration = totalChallengeDuration - elapsedChallengeDuration;
+
+    console.log('elapsedChallengeDuration', elapsedChallengeDuration);
+    console.log('totalChallengeDuration', totalChallengeDuration);
+
+    team.neededProzent = ((elapsedChallengeDuration / totalChallengeDuration) * 100).toFixed(1);
 
     console.log('team team', team);
   }
