@@ -23,7 +23,7 @@
                 >
                   <div
                     class="progress-bar progress-bar-striped d-flex justify-content-between"
-                    :class="{ 'bg-success': team.prozent >= team.neededProzent, 'bg-danger': team.prozent <= team.neededProzent }"
+                    :class="{ 'bg-success': team.sumCount >= team.neededCount, 'bg-danger': team.sumCount <= team.neededCount }"
                     :style="{ width: team.prozent + '%' }"
                   >
                     <span v-if="team.prozent >= 10"> {{ team.prozent }} % <span v-if="team.prozent >= 80">( noch {{ team.restCount }} )</span></span>
@@ -142,7 +142,7 @@ const teamList = computed(() => {
     console.log('elapsedChallengeDuration', elapsedChallengeDuration);
     console.log('totalChallengeDuration', totalChallengeDuration);
 
-    team.neededProzent = ((elapsedChallengeDuration / totalChallengeDuration) * 100).toFixed(1);
+    team.neededCount = Math.ceil((team.endCount / totalChallengeDuration) * elapsedChallengeDuration);
 
     console.log('team team', team);
   }
