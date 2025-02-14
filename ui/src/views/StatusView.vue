@@ -118,7 +118,12 @@ const teamList = computed(() => {
       user.prozent = ((user.count / selChallenge.count) * 100).toFixed(1);
     }
 
-    team.users.sort((a, b) => b.prozent - a.prozent);
+    team.users.sort((a, b) => {
+      if (b.prozent === a.prozent) {
+        return a.username.localeCompare(b.username);
+      }
+        return b.prozent - a.prozent;
+    });
 
     team.endCount = selChallenge.count * team.users.length;
     team.restCount = team.endCount - team.sumCount;
