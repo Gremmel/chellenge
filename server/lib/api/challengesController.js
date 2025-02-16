@@ -12,7 +12,9 @@ class ChallengesController {
 
       const stmt2 = dbController.prepare(`SELECT * FROM counter where userId = ?`);
       const counter = stmt2.all(userId);
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Berlin' });
+
+      logger.fatal(' today', today);
 
       for (const countEntry of counter) {
         for (const item of list) {
