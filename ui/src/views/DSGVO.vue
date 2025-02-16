@@ -45,7 +45,12 @@
     </ul>
     <p>Zur Ausübung dieser Rechte kann eine E-Mail an <a href="mailto:challenge@soseies.de">challenge@soseies.de</a> gesendet werden.</p>
 
-    <h2>8. Änderungen der Datenschutzerklärung</h2>
+    <h2>8. Cookie-Session-Handling</h2>
+    <p>Um den Login zu ermöglichen, verwenden wir Cookies zur Verwaltung der Session. Diese Cookies speichern eine eindeutige Session-ID, die es ermöglicht, den Nutzer während der Dauer der Session wiederzuerkennen.</p>
+    <p>Die Session-Cookies sind für die Dauer von einem Monat gültig, sofern der Nutzer sich nicht vorher ausloggt.</p>
+    <p>Die Verwendung von Cookies erfolgt gemäß Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse), da sie notwendig sind, um die Funktionalität der Website zu gewährleisten.</p>
+
+    <h2>9. Änderungen der Datenschutzerklärung</h2>
     <p>Diese Datenschutzerklärung kann bei Bedarf angepasst werden, falls sich die Verarbeitung der Daten ändert.</p>
   </div>
 </template>
