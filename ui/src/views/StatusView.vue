@@ -26,9 +26,14 @@
                     :class="{ 'bg-success': team.sumCount >= team.neededCount, 'bg-danger': team.sumCount <= team.neededCount }"
                     :style="{ width: team.prozent + '%' }"
                   >
-                    <span v-if="team.prozent >= 10"> {{ team.prozent }} % <span v-if="team.prozent >= 80">( noch {{ team.restCount }} )</span></span>
-
+                    <span v-if="team.prozent >= 10">
+                       {{ team.prozent }} % <span v-if="team.prozent >= 80">( noch {{ team.restCount }} )</span>
+                    </span>
                   </div>
+                  <div
+                    class="progress-bar progress-bar-striped bg-secondary"
+                    :style="{ width: team.restHeuteProzent + '%' }"
+                  ></div>
                   <span v-if="team.prozent < 10" class="ms-1"> {{ team.prozent }} % </span>
                   <span v-if="team.prozent < 80" class="ms-auto me-2">noch {{ team.restCount }}</span>
                 </div>
@@ -132,8 +137,13 @@ const teamList = computed(() => {
 
     // Berechne die benötigten Prozente basierend auf der verbleibenden Zeit
     const challengeStartDate = new Date(selChallenge.startDatum);
+    challengeStartDate.setHours(0, 0, 0, 0);
+
     const challengeEndDate = new Date(selChallenge.endDatum);
+    challengeEndDate.setHours(0, 0, 0, 0);
+
     const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
 
     const totalChallengeDuration = (challengeEndDate - challengeStartDate) / (1000 * 60 * 60 * 24); // in Tagen
     const elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate) / (1000 * 60 * 60 * 24)); // in Tagen
@@ -142,9 +152,19 @@ const teamList = computed(() => {
     console.log('elapsedChallengeDuration', elapsedChallengeDuration);
     console.log('totalChallengeDuration', totalChallengeDuration);
 
+    // berechnung der restlichen Prozente für heute
+    const tagesProzent = 100 / totalChallengeDuration;
+    const sollHeuteProzent = tagesProzent * elapsedChallengeDuration;
+
+    team.restHeuteProzent = sollHeuteProzent - team.prozent;
+
+    if (team.restHeuteProzent < 0) {
+      team.restHeuteProzent = 0;
+    }
+
     team.neededCount = Math.ceil((team.endCount / totalChallengeDuration) * elapsedChallengeDuration);
 
-    console.log('team team', team);
+    console.log('team', team);
   }
 
   // Teams nach Prozent absteigend sortieren
