@@ -31,7 +31,8 @@
                     </span>
                   </div>
                   <div
-                    class="progress-bar progress-bar-striped bg-secondary"
+                    class="progress-bar progress-bar-striped"
+                    style="background-color: lightgray;"
                     :style="{ width: team.restHeuteProzent + '%' }"
                   ></div>
                   <span v-if="team.prozent < 10" class="ms-1"> {{ team.prozent }} % </span>
@@ -146,7 +147,7 @@ const teamList = computed(() => {
     currentDate.setHours(0, 0, 0, 0);
 
     const totalChallengeDuration = (challengeEndDate - challengeStartDate) / (1000 * 60 * 60 * 24); // in Tagen
-    const elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate) / (1000 * 60 * 60 * 24)); // in Tagen
+    const elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate + 1) / (1000 * 60 * 60 * 24)); // in Tagen
     // const remainingChallengeDuration = totalChallengeDuration - elapsedChallengeDuration;
 
     console.log('elapsedChallengeDuration', elapsedChallengeDuration);
@@ -154,7 +155,9 @@ const teamList = computed(() => {
 
     // berechnung der restlichen Prozente für heute
     const tagesProzent = 100 / totalChallengeDuration;
+    console.log(' tagesProzent', tagesProzent);
     const sollHeuteProzent = tagesProzent * elapsedChallengeDuration;
+    console.log(' sollHeuteProzent', sollHeuteProzent);
 
     team.restHeuteProzent = sollHeuteProzent - team.prozent;
 
