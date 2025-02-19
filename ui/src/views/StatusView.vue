@@ -12,7 +12,10 @@
           <div v-if="selectedChallenge">
             <div v-for="team in teamList" :key="team.name" class="card mb-2">
               <div class="card-header">
-                {{ team.name }}
+                <div class="d-flex justify-content-between w-100">
+                  <span>{{ team.name }}</span>
+                  <span style="font-size: 0.8rem;" class="align-self-end">noch {{ team.restCount }}</span>
+                </div>
                 <div
                   class="progress"
                   role="progressbar"
@@ -24,19 +27,22 @@
                   <div
                     class="progress-bar progress-bar-striped d-flex justify-content-between"
                     :class="{ 'bg-success': team.sumCount >= team.neededCount, 'bg-danger': team.sumCount <= team.neededCount }"
+                    style="overflow: visible; white-space: nowrap;"
                     :style="{ width: team.prozent + '%' }"
                   >
                     <span v-if="team.prozent >= 10">
-                       {{ team.prozent }} % <span v-if="team.prozent >= 80">( noch {{ team.restCount }} )</span>
+                       {{ team.prozent }} %
                     </span>
                   </div>
                   <div
-                    class="progress-bar progress-bar-striped"
-                    style="background-color: lightgray;"
+                    class="progress-bar progress-bar-striped d-flex justify-content-between"
+                    style="background-color: lightgray; overflow: visible; white-space: nowrap;"
                     :style="{ width: team.restHeuteProzent + '%' }"
-                  ></div>
-                  <span v-if="team.prozent < 10" class="ms-1"> {{ team.prozent }} % </span>
-                  <span v-if="team.prozent < 80" class="ms-auto me-2">noch {{ team.restCount }}</span>
+                  >
+                    <span v-if="team.prozent < 10" class="ms-1 text-start" style="color: black;">
+                       {{ team.prozent }} %
+                    </span>
+                  </div>
                 </div>
               </div>
               <div class="card-body">

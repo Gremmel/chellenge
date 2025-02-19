@@ -24,10 +24,20 @@
                 {{ challenge.countDone }} von {{ challenge.count }} (geschlossen)
               </div>
               <div v-else-if="challenge.restCount > 0">
-                noch {{ challenge.restCount }} von {{ challenge.count }} (noch {{ challenge.nochTage }} Tage)
+                <template v-if="challenge.nochTage > 1">
+                  noch {{ challenge.restCount }} von {{ challenge.count }} (noch {{ challenge.nochTage }} Tage)
+                </template>
+                <template v-if="challenge.nochTage == 1">
+                  noch {{ challenge.restCount }} von {{ challenge.count }} (noch Heute)
+                </template>
               </div>
               <div v-else>
-                {{ challenge.countDone }} von {{ challenge.count }}
+                <template v-if="challenge.nochTage > 1">
+                  {{ challenge.countDone }} von {{ challenge.count }} (noch {{ challenge.nochTage }} Tage)
+                </template>
+                <template v-if="challenge.nochTage == 1">
+                  {{ challenge.countDone }} von {{ challenge.count }} (noch Heute)
+                </template>
               </div>
               <div
                 class="progress"
