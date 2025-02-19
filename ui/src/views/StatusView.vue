@@ -25,7 +25,7 @@
                   aria-valuemax="100"
                 >
                   <div
-                    class="progress-bar progress-bar-striped d-flex justify-content-between"
+                    class="progress-bar progress-bar-striped"
                     :class="{ 'bg-success': team.sumCount >= team.neededCount, 'bg-danger': team.sumCount <= team.neededCount }"
                     style="overflow: visible; white-space: nowrap;"
                     :style="{ width: team.prozent + '%' }"
@@ -35,7 +35,7 @@
                     </span>
                   </div>
                   <div
-                    class="progress-bar progress-bar-striped d-flex justify-content-between"
+                    class="progress-bar progress-bar-striped"
                     style="background-color: lightgray; overflow: visible; white-space: nowrap;"
                     :style="{ width: team.restHeuteProzent + '%' }"
                   >
