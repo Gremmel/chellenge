@@ -14,7 +14,7 @@
               <div class="card-header">
                 <div class="d-flex justify-content-between w-100">
                   <span>{{ team.name }}</span>
-                  <span v-if="team.neededCountHeute > 0" style="font-size: 0.8rem;" class="align-self-end">
+                  <span v-if="team.neededCountHeute > 0 && team.neededCountHeute < team.restCount" style="font-size: 0.8rem;" class="align-self-end">
                     noch {{ team.neededCountHeute }} | {{ team.restCount }}
                   </span>
                   <span v-else style="font-size: 0.8rem;" class="align-self-end">
@@ -158,7 +158,11 @@ const teamList = computed(() => {
     currentDate.setHours(0, 0, 0, 0);
 
     const totalChallengeDuration = (challengeEndDate - challengeStartDate) / (1000 * 60 * 60 * 24); // in Tagen
-    const elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate + 1) / (1000 * 60 * 60 * 24)); // in Tagen
+    let elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate + 1) / (1000 * 60 * 60 * 24)); // in Tagen
+
+    if (elapsedChallengeDuration > totalChallengeDuration) {
+      elapsedChallengeDuration = totalChallengeDuration;
+    }
     // const remainingChallengeDuration = totalChallengeDuration - elapsedChallengeDuration;
 
     console.log('elapsedChallengeDuration', elapsedChallengeDuration);
