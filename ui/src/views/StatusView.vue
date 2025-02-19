@@ -14,7 +14,12 @@
               <div class="card-header">
                 <div class="d-flex justify-content-between w-100">
                   <span>{{ team.name }}</span>
-                  <span style="font-size: 0.8rem;" class="align-self-end">noch {{ team.restCount }}</span>
+                  <span v-if="team.neededCountHeute > 0" style="font-size: 0.8rem;" class="align-self-end">
+                    noch {{ team.neededCountHeute }} | {{ team.restCount }}
+                  </span>
+                  <span v-else style="font-size: 0.8rem;" class="align-self-end">
+                    noch {{ team.restCount }}
+                  </span>
                 </div>
                 <div
                   class="progress"
@@ -26,7 +31,7 @@
                 >
                   <div
                     class="progress-bar progress-bar-striped"
-                    :class="{ 'bg-success': team.sumCount >= team.neededCount, 'bg-danger': team.sumCount <= team.neededCount }"
+                    :class="{ 'bg-success': team.sumCount >= team.neededCount, 'bg-danger': team.sumCount < team.neededCount }"
                     style="overflow: visible; white-space: nowrap;"
                     :style="{ width: team.prozent + '%' }"
                   >
@@ -172,6 +177,7 @@ const teamList = computed(() => {
     }
 
     team.neededCount = Math.ceil((team.endCount / totalChallengeDuration) * elapsedChallengeDuration);
+    team.neededCountHeute = team.neededCount - team.sumCount;
 
     console.log('team', team);
   }
