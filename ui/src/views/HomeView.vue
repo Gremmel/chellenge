@@ -58,7 +58,7 @@
                   Heute noch {{ challenge.restTagesCount }} von {{ challenge.tagesCount }}
                 </div>
                 <div v-else>
-                  {{ challenge.countDatumHeute }} von {{ challenge.tagesCount }}
+                  Heute: {{ challenge.countDatumHeute }}<span v-if="challenge.tagesCount > 0"> von {{ challenge.tagesCount }}</span>
                 </div>
                 <div
                   class="progress"
