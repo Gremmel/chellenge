@@ -3,7 +3,7 @@
     <div class="text-center mt-4">
       <div class="container">
         <div v-if="statusDataRescieved === false">
-          <div class="d-flex justify-content-center">
+          <div v-if="showSpinner" class="d-flex justify-content-center">
             <div class="spinner-border" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
@@ -106,6 +106,11 @@ const vereineList = reactive([]);
 const challengeList = reactive([]);
 const selectedChallenge = ref(null);
 const statusDataRescieved = ref(false);
+const showSpinner = ref(false);
+
+setTimeout(() => {
+  showSpinner.value = true;
+}, 2000);
 
 const isMobileView = ref(window.innerWidth <= 768);
 
