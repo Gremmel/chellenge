@@ -218,14 +218,14 @@ const challengeList = computed(() => {
     let finished = false;
 
     // wenn enddatum der challenge kleiner als heute ist, dann countDone = count
-    if (new Date(challenge.endDatum) < new Date()) {
+    if (new Date(challenge.endDatum + 'T00:00:00') < new Date()) {
       finished = true;
     }
 
     let started = true;
 
     // wenn startdatum der challenge größer als heute ist, dann countDone = 0
-    if (new Date(challenge.startDatum) > new Date()) {
+    if (new Date(challenge.startDatum + 'T00:00:00') > new Date()) {
       started = false;
     }
 
@@ -237,14 +237,14 @@ const challengeList = computed(() => {
 
     let nochTage;
     let tagesCount;
-    let zeitraumTage = Math.ceil((new Date(challenge.endDatum) - new Date(challenge.startDatum)) / (1000 * 60 * 60 * 24));
+    let zeitraumTage = Math.ceil((new Date(challenge.endDatum + 'T00:00:00') - new Date(challenge.startDatum + 'T00:00:00')) / (1000 * 60 * 60 * 24));
 
     if (!started) {
-      nochTage = Math.ceil((new Date(challenge.startDatum) - new Date()) / (1000 * 60 * 60 * 24));
+      nochTage = Math.ceil((new Date(challenge.startDatum + 'T00:00:00') - new Date()) / (1000 * 60 * 60 * 24));
       tagesCount = 0;
     } else if (!finished) {
       // Anzahl Tage bis zum Ende der Challenge
-      nochTage = Math.ceil((new Date(challenge.endDatum) - new Date()) / (1000 * 60 * 60 * 24));
+      nochTage = Math.ceil((new Date(challenge.endDatum + 'T00:00:00') - new Date()) / (1000 * 60 * 60 * 24));
       // Anzahl Übungen pro tag
       tagesCount = (challenge.count - challenge.countDone + challenge.countDatumHeute) / nochTage;
 

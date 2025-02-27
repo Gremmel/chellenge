@@ -2,7 +2,14 @@
   <main>
     <div class="text-center mt-4">
       <div class="container">
-        <div v-if="challengeList.length === 0">
+        <div v-if="statusDataRescieved === false">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <div v-else-if="challengeList.length === 0">
           <h2>Keine Challenge aktiv</h2>
         </div>
         <div v-else>
@@ -18,7 +25,12 @@
                     noch {{ team.neededCountHeute }} | {{ team.restCount }}
                   </span>
                   <span v-else style="font-size: 0.8rem;" class="align-self-end">
-                    noch {{ team.restCount }}
+                    <template v-if="team.restCount > 0">
+                      noch {{ team.restCount }}
+                    </template>
+                    <template v-else>
+                      + {{ team.restCount *-1 }}
+                    </template>
                   </span>
                 </div>
                 <div
@@ -93,6 +105,7 @@ const userStore = useUserStore();
 const vereineList = reactive([]);
 const challengeList = reactive([]);
 const selectedChallenge = ref(null);
+const statusDataRescieved = ref(false);
 
 const isMobileView = ref(window.innerWidth <= 768);
 
@@ -194,6 +207,8 @@ const teamList = computed(() => {
 const getStatusData = async () => {
   let response;
 
+  statusDataRescieved.value = false;
+
   try {
     response = await fetch(`/api/getStatusData`, {
       method: 'GET',
@@ -202,6 +217,8 @@ const getStatusData = async () => {
 
     const result = await response.json();
     console.log('getStatusData result', result);
+
+    statusDataRescieved.value = true;
 
     if (response.ok) {
       challengeList.splice(0);
