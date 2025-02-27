@@ -209,10 +209,12 @@ const teamList = computed(() => {
   return sortedTeams;
 });
 
-const getStatusData = async () => {
+const getStatusData = async (first = true) => {
   let response;
 
-  statusDataRescieved.value = false;
+  if (first) {
+    statusDataRescieved.value = false;
+  }
 
   try {
     response = await fetch(`/api/getStatusData`, {
@@ -294,7 +296,7 @@ async function getVereineList() {
 
     timerValue = setTimeout(() => {
       console.log('timer getStatusData');
-      getStatusData();
+      getStatusData(false);
     }, 30 * 1000);
   }
 
