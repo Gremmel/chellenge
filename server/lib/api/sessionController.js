@@ -1,12 +1,44 @@
+/* eslint-disable no-sync */
 import jwt from 'jsonwebtoken';
 import logger from '../logger.js';
+import fs from 'fs-extra';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 const sessionController = {
   sessions: [],
   config: null,
+  sessionsFilePath: null,
 
   init (config) {
     this.config = config;
+    this.sessionsFilePath = path.join(dirname, 'sessions.json');
+
+    if (fs.existsSync(this.sessionsFilePath)) {
+      try {
+        logger.info('Lade Sessions aus Datei');
+        this.sessions = fs.readJSONSync(this.sessionsFilePath);
+      } catch (error) {
+        logger.error('Fehler beim Laden der Sessions:', error);
+        try {
+          fs.removeSync(this.sessionsFilePath);
+        } catch (errorDel) {
+          logger.error('Fehler beim Löschen der korrupten Sessions-Datei:', errorDel);
+        }
+        this.sessions = [];
+      }
+    }
+  },
+
+  async writeSessionToFile () {
+    try {
+      fs.writeJSON(this.sessionsFilePath, this.sessions, { spaces: 2 });
+    } catch (error) {
+      logger.error('Fehler beim Schreiben der Sessions:', error);
+    }
   },
 
   extendToken (oldToken) {
@@ -28,6 +60,8 @@ const sessionController = {
         }
       }
 
+      this.writeSessionToFile();
+
       return newToken;
     } catch (error) {
       logger.error('Fehler beim Verlängern des Tokens:', error);
@@ -46,6 +80,8 @@ const sessionController = {
 
     this.sessions.push(session);
 
+    this.writeSessionToFile();
+
     return token;
   },
 
@@ -55,6 +91,8 @@ const sessionController = {
     if (index !== -1) {
       this.sessions.splice(index, 1);
     }
+
+    this.writeSessionToFile();
   },
 
   getSessionByToken (token) {

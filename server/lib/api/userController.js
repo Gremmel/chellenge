@@ -43,6 +43,19 @@ class UserController {
     }
   }
 
+  getUserEnabled (user) {
+    try {
+      const stmt = dbController.prepare(`SELECT enabled FROM fos_user WHERE id = ${user.id}`);
+      const res = stmt.get();
+
+      return res.enabled;
+    } catch (error) {
+      logger.error('Fehler beim Abrufen des Benutzers:', error);
+
+      throw new Error('Konnte den Benutzer nicht abrufen.');
+    }
+  }
+
   async hashPassword (password) {
     const saltRounds = 13; // Je höher die Zahl, desto sicherer, aber langsamer
 

@@ -14,6 +14,7 @@ export const useUserStore = defineStore('userStore', {
 
   getters: {
     isLoggedIn: (state) => !!state.user,
+    isEnabled: (state) => state.user && (state.user.enabled == 1 || state.user.roles.includes('admin'))
   },
 
   actions: {

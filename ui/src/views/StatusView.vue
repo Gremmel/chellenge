@@ -1,7 +1,7 @@
 <template>
   <main>
     <div class="text-center mt-4">
-      <div class="container">
+      <div v-if="userActive" class="container">
         <div v-if="statusDataRescieved === false">
           <div v-if="showSpinner" class="d-flex justify-content-center">
             <div class="spinner-border" role="status">
@@ -91,6 +91,13 @@
           </div>
         </div>
       </div>
+      <!-- user ist nicht Aktiv -->
+      <div v-else class="container mt-4">
+        <div class="alert alert-warning" role="alert">
+          <h4>Du bist in der aktuellen Challenge nicht aktiviert</h4>
+        </div>
+      </div>
+
     </div>
   </main>
 </template>
@@ -111,6 +118,10 @@ const showSpinner = ref(false);
 setTimeout(() => {
   showSpinner.value = true;
 }, 2000);
+
+const userActive = computed(() => {
+  return userStore.isEnabled;
+});
 
 const isMobileView = ref(window.innerWidth <= 768);
 
@@ -289,6 +300,27 @@ async function getVereineList() {
     }
   }
 
+  async function getSessionData() {
+    try {
+      const response = await fetch('/api/getSession', {
+        method: 'GET',
+        credentials: 'include'  // Cookies mitsenden
+      });
+
+      const result = await response.json();
+      console.log('getSession result', result);
+
+      if (response.ok) {
+        userStore.setUser(result.user);
+      } else {
+        console.log(result.message || 'keine Session Daten vorhanden');
+      }
+    } catch (error) {
+      console.error('Es gab ein Problem mit dem Abrufen der Sessiondaten:', error);
+    }
+    userStore.getSessionDataFinished = true;
+  }
+
   let timerValue;
 
   const startTimer = () => {
@@ -301,6 +333,7 @@ async function getVereineList() {
   }
 
   onMounted(() => {
+    getSessionData();
     getVereineList();
   });
 

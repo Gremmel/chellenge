@@ -53,12 +53,19 @@ const apiRoutes = {
       res.json({ message: 'Erfolgreich abgemeldet' });
     });
 
-    // Logout-Route (GET)
+    // getSession (GET)
     app.get('/api/getSession', (req, res) => {
       const token = req.cookies.session_token;
 
       if (token) {
         const session = sessionController.getSessionByToken(token);
+
+        if (session?.user) {
+          // abfragen ob der user aktiv ist
+          const userEnabled = userController.getUserEnabled(session.user);
+
+          session.user.enabled = userEnabled;
+        }
 
         res.json({ user: session?.user });
       } else {

@@ -1,10 +1,10 @@
 <template>
   <main>
     <div class="text-center mt-4">
-      <h2>
+      <h2 v-if="userActive">
         Herausforderungen
       </h2>
-      <div class="container">
+      <div v-if="userActive" class="container">
         <div v-for="challenge in challengeList" :key="challenge.id" class="card mb-2">
           <div class="card-header">
             <span class="challengeName">{{ challenge.name }}</span>
@@ -103,6 +103,12 @@
           </div>
         </div>
       </div>
+      <!-- user ist nicht Aktiv -->
+      <div v-else class="container mt-4">
+        <div class="alert alert-warning" role="alert">
+          <h4>Du bist in der aktuellen Challenge nicht aktiviert</h4>
+        </div>
+      </div>
 
     </div>
   </main>
@@ -121,6 +127,10 @@ const delChallengeId = ref(0);
 
 const isAdmin = computed(() => {
   return userStore.hasRole('admin');
+});
+
+const userActive = computed(() => {
+  return userStore.isEnabled;
 });
 
 const deleteChallenge = async () => {
@@ -288,6 +298,27 @@ const challengeList = computed(() => {
   return list;
 });
 
+async function getSessionData() {
+  try {
+    const response = await fetch('/api/getSession', {
+      method: 'GET',
+      credentials: 'include'  // Cookies mitsenden
+    });
+
+    const result = await response.json();
+    console.log('getSession result', result);
+
+    if (response.ok) {
+      userStore.setUser(result.user);
+    } else {
+      console.log(result.message || 'keine Session Daten vorhanden');
+    }
+  } catch (error) {
+    console.error('Es gab ein Problem mit dem Abrufen der Sessiondaten:', error);
+  }
+  userStore.getSessionDataFinished = true;
+}
+
 const getChallenges = async () => {
   let response;
 
@@ -328,6 +359,7 @@ const startTimer = () => {
 }
 
 onMounted(async () => {
+  getSessionData();
   getChallenges();
 });
 
