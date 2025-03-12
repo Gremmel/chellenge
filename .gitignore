@@ -4,3 +4,4 @@ server/testSrc/testExtern/log
 makeSqliteTable/jsonDBDateien/*
 makeSqliteTable/datenbank.db
 server/lib/log
+server/lib/api/sessions.json
