@@ -95,7 +95,12 @@
             </template>
             <!-- noch nicht gestartet -->
             <template v-else>
-              startet in {{ challenge.nochTage }} Tagen<br>
+              <template v-if="challenge.nochTage > 1">
+                startet in {{ challenge.nochTage }} Tagen<br>
+              </template>
+              <template v-else>
+                startet Morgen<br>
+              </template>
               Start: {{ new Date(challenge.startDatum).toLocaleDateString('de-DE') }} - Ende: {{ new Date(challenge.endDatum).toLocaleDateString('de-DE') }}<br>
               laufzeit: {{ challenge.zeitraumTage }} Tage <br>
                 Übungen pro Tag {{ Math.ceil(challenge.count / challenge.zeitraumTage) }}
