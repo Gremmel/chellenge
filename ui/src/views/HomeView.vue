@@ -364,7 +364,7 @@ const startTimer = () => {
 }
 
 onMounted(async () => {
-  getSessionData();
+  //getSessionData();
   getChallenges();
 });
 

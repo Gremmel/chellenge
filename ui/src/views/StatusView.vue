@@ -333,7 +333,7 @@ async function getVereineList() {
   }
 
   onMounted(() => {
-    getSessionData();
+    // getSessionData();
     getVereineList();
   });
 
