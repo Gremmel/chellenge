@@ -22,10 +22,10 @@ class DatabaseController {
    */
   ensureChallengeColumns () {
     const columnsToAdd = [
-      { name: 'challengeTyp', type: 'INTEGER' },
+      { name: 'challengeType', type: 'TEXT' },
       { name: 'countBeginn', type: 'INTEGER' },
       { name: 'countAdd', type: 'INTEGER' },
-      { name: 'countIntervall', type: 'INTEGER' }
+      { name: 'countMultiplikator', type: 'INTEGER' }
     ];
 
     // Hole die existierenden Spaltennamen

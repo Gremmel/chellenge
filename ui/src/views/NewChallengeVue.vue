@@ -14,7 +14,20 @@
       </div>
 
       <div class="mb-3">
-        <label for="count" class="form-label">Anzahl Übungen pro User</label>
+        <label for="description" class="form-label">Challenge Typ</label>
+        <select
+          id="description"
+          v-model="form.challengeType"
+          class="form-select"
+          required
+        >
+          <option value="1">Feste Übungsanzahl</option>
+          <option value="2">Aufsteigende Übungsanzahl</option>
+        </select>
+      </div>
+
+      <div v-if="form.challengeType === '1'" class="mb-3">
+        <label for="count" class="form-label">Gesamtanzahl Übungen</label>
         <input
           type="number"
           id="count"
@@ -23,6 +36,47 @@
           required
         />
       </div>
+
+      <template v-else-if="form.challengeType === '2'">
+        <div class="mb-3">
+          <label for="countBeginn" class="form-label">Anzahl Übungen am Anfang</label>
+          <input
+            type="number"
+            id="countBeginn"
+            v-model="form.countBeginn"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="countAdd" class="form-label">Anzahl Übungen erhöhen</label>
+          <input
+            type="number"
+            id="countAdd"
+            v-model="form.countAdd"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="countMultiplikator" class="form-label">Multiplikator der Steigerung</label>
+          <input
+            type="number"
+            id="countMultiplikator"
+            v-model="form.countMultiplikator"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          gesamt Count: {{ gesamtCount }}<br />
+          letzer Übungs Anzahl: {{ lastCurrentCount }}
+        </div>
+
+      </template>
 
       <div class="mb-3">
         <label for="startDatum" class="form-label">Startdatum</label>
@@ -36,7 +90,7 @@
       </div>
 
       <div class="mb-3">
-        <label for="endDatum" class="form-label">Enddatum</label>
+        <label for="endDatum" class="form-label">bis Enddatum (ohne diesen Tag)</label>
         <input
           type="date"
           id="endDatum"
@@ -62,18 +116,70 @@ const form = ref({
   count: '',
   startDatum: '',
   endDatum: '',
+  challengeType: '1',
+  countBeginn: 5,
+  countAdd: 1,
+  countMultiplikator: 1
 });
 
 const router = useRouter();
 const errorMessage = ref('');
 const submitted = ref(false);
+let lastCurrentCount = ref(0);
 
 const disabledSubmit = computed(() => {
-  return form.value.name === '' || form.value.count === '' || form.value.startDatum === '' || form.value.endDatum === '';
+  if (form.value.challengeType === '1') {
+    return form.value.name === '' || form.value.count === '' || form.value.startDatum === '' || form.value.endDatum === '';
+  }
+
+  if (form.value.challengeType === '2') {
+    return form.value.name === '' || form.value.startDatum === '' || form.value.endDatum === '' || form.value.countBeginn === '' || form.value.countAdd === '' || form.value.countMultiplikator === '';
+  }
+
+  return false;
+});
+
+const berGesamtCount = () => {
+  const start = new Date(form.value.startDatum);
+  const end = new Date(form.value.endDatum);
+  let total = 0;
+  let currentCount = form.value.countBeginn;
+  let zaehler = 0;
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    total += currentCount;
+    zaehler++;
+
+    if (zaehler >= form.value.countMultiplikator) {
+      currentCount += form.value.countAdd;
+      zaehler = 0;
+    }
+  }
+
+  lastCurrentCount.value = currentCount;
+
+  return total;
+}
+
+const gesamtCount = computed(() => {
+  if (!form.value.startDatum || !form.value.endDatum) {
+    return 0;
+  }
+
+  if (form.value.challengeType === '2') {
+    return berGesamtCount();
+  }
+  return form.value.count;
 });
 
 const submitForm = async () => {
   submitted.value = true;
+
+  if (form.value.challengeType === '2') {
+    form.value.count = berGesamtCount();
+  }
+
+  console.warn('Formular wird gesendet:', form.value);
 
   try {
     const response = await fetch('/api/addChallenge', {
@@ -85,7 +191,11 @@ const submitForm = async () => {
         name: form.value.name,
         count: form.value.count,
         startDatum: form.value.startDatum,
-        endDatum: form.value.endDatum
+        endDatum: form.value.endDatum,
+        challengeType: form.value.challengeType,
+        countBeginn: form.value.countBeginn,
+        countAdd: form.value.countAdd,
+        countMultiplikator: form.value.countMultiplikator
       }),
       credentials: 'include'
     });

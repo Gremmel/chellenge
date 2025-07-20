@@ -182,7 +182,36 @@ class ChallengesController {
   // Challenge hinzufügen
   addChallenge (challenge) {
     try {
-      dbController.prepare(`INSERT INTO challenges (name, count, startDatum, endDatum) VALUES (?, ?, ?, ?)`).run(challenge.name, challenge.count, challenge.startDatum, challenge.endDatum);
+      dbController.prepare(
+        `INSERT INTO challenges (
+          name,
+          count,
+          startDatum,
+          endDatum,
+          challengeType,
+          countBeginn,
+          countAdd,
+          countMultiplikator
+        ) VALUES (
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?
+        )`
+      ).run(
+        challenge.name,
+        challenge.count,
+        challenge.startDatum,
+        challenge.endDatum,
+        challenge.challengeType,
+        challenge.countBeginn,
+        challenge.countAdd,
+        challenge.countMultiplikator
+      );
 
       return true;
     } catch (error) {
