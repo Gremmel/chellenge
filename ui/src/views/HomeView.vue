@@ -221,6 +221,26 @@ const clickSave = async (challengeData) => {
   disableButtons.value = false;
 }
 
+const berTagesCount = (challenge) => {
+  const countUebungenBisGestern = challenge.countDone - challenge.countDatumHeute;
+
+  let total = 0;
+  let currentCount = challenge.countBeginn;
+  let zaehler = 0;
+
+  while (total <= countUebungenBisGestern) {
+    if (zaehler >= challenge.countMultiplikator) {
+      currentCount += challenge.countAdd;
+      zaehler = 0;
+    }
+
+    total += currentCount;
+    zaehler++;
+  }
+
+  return currentCount;
+}
+
 // Berechnete ChallengeList
 const challengeList = computed(() => {
   const list = [];
@@ -257,7 +277,7 @@ const challengeList = computed(() => {
     if (!started) {
       nochTage = Math.ceil((new Date(challenge.startDatum + 'T00:00:00') - new Date()) / (1000 * 60 * 60 * 24));
       tagesCount = 0;
-    } else if (!finished) {
+    } else if (!finished && challenge.challengeType === '1') {
       // Anzahl Tage bis zum Ende der Challenge
       nochTage = Math.ceil((new Date(challenge.endDatum + 'T00:00:00') - new Date()) / (1000 * 60 * 60 * 24));
       // Anzahl Übungen pro tag
@@ -265,6 +285,10 @@ const challengeList = computed(() => {
 
       // Aufrunden
       tagesCount = Math.ceil(tagesCount);
+    } else if (!finished && challenge.challengeType === '2') {
+      // Anzahl Tage bis zum Ende der Challenge
+      nochTage = Math.ceil((new Date(challenge.endDatum + 'T00:00:00') - new Date()) / (1000 * 60 * 60 * 24));
+      tagesCount = berTagesCount(challenge);
     } else {
       nochTage = 0;
       tagesCount = 0;

@@ -29,7 +29,7 @@
                     <div class="d-flex justify-content-between w-100">
                       <span>{{ team.name }}</span>
                       <span v-if="team.neededCountHeute > 0 && team.neededCountHeute < team.restCount" style="font-size: 0.8rem;" class="align-self-end">
-                        noch {{ team.neededCountHeute }} | {{ team.restCount }}
+                        noch {{ team.neededCountHeute }} heute | noch {{ team.restCount }} gesamt
                       </span>
                       <span v-else style="font-size: 0.8rem;" class="align-self-end">
                         <template v-if="team.restCount > 0">
@@ -109,7 +109,7 @@
                   <div class="d-flex justify-content-between w-100">
                     <span>{{ team.name }}</span>
                     <span v-if="team.neededCountHeute > 0 && team.neededCountHeute < team.restCount" style="font-size: 0.8rem;" class="align-self-end">
-                      noch {{ team.neededCountHeute }} | {{ team.restCount }}
+                      noch {{ team.neededCountHeute }} heute | noch {{ team.restCount }} gesamt
                     </span>
                     <span v-else style="font-size: 0.8rem;" class="align-self-end">
                       <template v-if="team.restCount > 0">
@@ -224,6 +224,36 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateSideBySide);
 });
 
+const berSollCountBisHeute = (challenge, team) => {
+  const start = new Date(challenge.startDatum);
+  const end = new Date();
+  let total = 0;
+  let currentCount = challenge.countBeginn;
+  let zaehler = 0;
+
+  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+    if (zaehler >= challenge.countMultiplikator) {
+      currentCount += challenge.countAdd;
+      zaehler = 0;
+    }
+
+    total += currentCount;
+    zaehler++;
+  }
+
+  team.neededCount = total * team.users.length;
+  team.neededCountHeute = team.neededCount - team.sumCount;
+
+  // for (const user of team.users) {
+  //   team.neededCountHeute -= user.countDatumHeute;
+  // }
+
+  team.restHeuteProzent = team.neededCount / team.endCount * 100;
+
+  team.restHeuteProzent = team.restHeuteProzent - team.prozent;
+}
+
+
 const challengeListShow = computed(() => {
   const list = [];
 
@@ -251,62 +281,112 @@ const challengeListShow = computed(() => {
     }
 
     // prozentwerte der Teams berechnen
-    for (const teamKey in teams) {
-      const team = teams[teamKey];
 
-      for (const user of team.users) {
-        team.sumCount += user.count;
-        user.prozent = ((user.count / selChallenge.count) * 100).toFixed(1);
-      }
+    // Challene type 1 Gesamt Count
+    if (selChallenge.challengeType === '1') {
+      for (const teamKey in teams) {
+        const team = teams[teamKey];
 
-      team.users.sort((a, b) => {
-        if (b.prozent === a.prozent) {
-          return a.username.localeCompare(b.username);
+        for (const user of team.users) {
+          team.sumCount += user.count;
+          user.prozent = ((user.count / selChallenge.count) * 100).toFixed(1);
         }
-          return b.prozent - a.prozent;
-      });
 
-      team.endCount = selChallenge.count * team.users.length;
-      team.restCount = team.endCount - team.sumCount;
-      team.prozent = ((team.sumCount / team.endCount) * 100).toFixed(1);
+        team.users.sort((a, b) => {
+          if (b.prozent === a.prozent) {
+            return a.username.localeCompare(b.username);
+          }
+            return b.prozent - a.prozent;
+        });
 
-      // Berechne die benötigten Prozente basierend auf der verbleibenden Zeit
-      const challengeStartDate = new Date(selChallenge.startDatum);
-      challengeStartDate.setHours(0, 0, 0, 0);
+        team.endCount = selChallenge.count * team.users.length;
+        team.restCount = team.endCount - team.sumCount;
+        team.prozent = ((team.sumCount / team.endCount) * 100).toFixed(1);
 
-      const challengeEndDate = new Date(selChallenge.endDatum);
-      challengeEndDate.setHours(0, 0, 0, 0);
+        // Berechne die benötigten Prozente basierend auf der verbleibenden Zeit
+        const challengeStartDate = new Date(selChallenge.startDatum);
+        challengeStartDate.setHours(0, 0, 0, 0);
 
-      const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0);
+        const challengeEndDate = new Date(selChallenge.endDatum);
+        challengeEndDate.setHours(0, 0, 0, 0);
 
-      const totalChallengeDuration = (challengeEndDate - challengeStartDate) / (1000 * 60 * 60 * 24); // in Tagen
-      let elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate + 1) / (1000 * 60 * 60 * 24)); // in Tagen
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
 
-      if (elapsedChallengeDuration > totalChallengeDuration) {
-        elapsedChallengeDuration = totalChallengeDuration;
+        const totalChallengeDuration = (challengeEndDate - challengeStartDate) / (1000 * 60 * 60 * 24); // in Tagen
+        let elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate + 1) / (1000 * 60 * 60 * 24)); // in Tagen
+
+        if (elapsedChallengeDuration > totalChallengeDuration) {
+          elapsedChallengeDuration = totalChallengeDuration;
+        }
+        // const remainingChallengeDuration = totalChallengeDuration - elapsedChallengeDuration;
+
+        console.log('elapsedChallengeDuration', elapsedChallengeDuration);
+        console.log('totalChallengeDuration', totalChallengeDuration);
+
+        // berechnung der restlichen Prozente für heute
+        const tagesProzent = 100 / totalChallengeDuration;
+        console.log(' tagesProzent', tagesProzent);
+        const sollHeuteProzent = tagesProzent * elapsedChallengeDuration;
+        console.log(' sollHeuteProzent', sollHeuteProzent);
+
+        team.restHeuteProzent = sollHeuteProzent - team.prozent;
+
+        if (team.restHeuteProzent < 0) {
+          team.restHeuteProzent = 0;
+        }
+
+        team.neededCount = Math.ceil((team.endCount / totalChallengeDuration) * elapsedChallengeDuration);
+        team.neededCountHeute = team.neededCount - team.sumCount;
+
+        console.log('team', team);
       }
-      // const remainingChallengeDuration = totalChallengeDuration - elapsedChallengeDuration;
+    } else if (selChallenge.challengeType === '2') {
+      for (const teamKey in teams) {
+        const team = teams[teamKey];
 
-      console.log('elapsedChallengeDuration', elapsedChallengeDuration);
-      console.log('totalChallengeDuration', totalChallengeDuration);
+        for (const user of team.users) {
+          team.sumCount += user.count;
+          user.prozent = ((user.count / selChallenge.count) * 100).toFixed(1);
+        }
 
-      // berechnung der restlichen Prozente für heute
-      const tagesProzent = 100 / totalChallengeDuration;
-      console.log(' tagesProzent', tagesProzent);
-      const sollHeuteProzent = tagesProzent * elapsedChallengeDuration;
-      console.log(' sollHeuteProzent', sollHeuteProzent);
+        team.users.sort((a, b) => {
+          if (b.prozent === a.prozent) {
+            return a.username.localeCompare(b.username);
+          }
+            return b.prozent - a.prozent;
+        });
 
-      team.restHeuteProzent = sollHeuteProzent - team.prozent;
+        team.endCount = selChallenge.count * team.users.length;
+        team.restCount = team.endCount - team.sumCount;
+        team.prozent = ((team.sumCount / team.endCount) * 100).toFixed(1);
 
-      if (team.restHeuteProzent < 0) {
-        team.restHeuteProzent = 0;
+        // Berechne die benötigten Prozente basierend auf der verbleibenden Zeit
+        const challengeStartDate = new Date(selChallenge.startDatum);
+        challengeStartDate.setHours(0, 0, 0, 0);
+
+        const challengeEndDate = new Date(selChallenge.endDatum);
+        challengeEndDate.setHours(0, 0, 0, 0);
+
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        const totalChallengeDuration = (challengeEndDate - challengeStartDate) / (1000 * 60 * 60 * 24); // in Tagen
+        let elapsedChallengeDuration = Math.ceil((currentDate - challengeStartDate + 1) / (1000 * 60 * 60 * 24)); // in Tagen
+
+        if (elapsedChallengeDuration > totalChallengeDuration) {
+          elapsedChallengeDuration = totalChallengeDuration;
+        }
+        // const remainingChallengeDuration = totalChallengeDuration - elapsedChallengeDuration;
+
+        console.log('elapsedChallengeDuration', elapsedChallengeDuration);
+        console.log('totalChallengeDuration', totalChallengeDuration);
+
+        // berechnung der restlichen Prozente für heute
+        berSollCountBisHeute(selChallenge,team);
+
+        console.log('team', team);
       }
-
-      team.neededCount = Math.ceil((team.endCount / totalChallengeDuration) * elapsedChallengeDuration);
-      team.neededCountHeute = team.neededCount - team.sumCount;
-
-      console.log('team', team);
     }
 
     // Teams nach Prozent absteigend sortieren
