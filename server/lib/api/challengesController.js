@@ -135,6 +135,10 @@ class ChallengesController {
         count: challenge.count,
         startDatum: challenge.startDatum,
         endDatum: challenge.endDatum,
+        challengeType: challenge.challengeType,
+        countBeginn: challenge.countBeginn,
+        countAdd: challenge.countAdd,
+        countMultiplikator: challenge.countMultiplikator,
         users: []
       };
 
