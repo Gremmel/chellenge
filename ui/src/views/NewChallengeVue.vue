@@ -146,14 +146,15 @@ const berGesamtCount = () => {
   let currentCount = form.value.countBeginn;
   let zaehler = 0;
 
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    total += currentCount;
-    zaehler++;
+  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+
 
     if (zaehler >= form.value.countMultiplikator) {
       currentCount += form.value.countAdd;
       zaehler = 0;
     }
+    total += currentCount;
+    zaehler++;
   }
 
   lastCurrentCount.value = currentCount;
